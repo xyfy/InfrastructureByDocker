@@ -1,5 +1,6 @@
 mongodb/data/db/*
 mongodb/data/log/*
+mongodb/home/mongodb/*
 rabbitmq/data/*
 rabbitmq/logs/*
 # except for .gitkeep
