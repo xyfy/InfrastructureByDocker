@@ -19,8 +19,8 @@ services:
       - ./mongodb/mongod.conf:/etc/mongod.conf
       - ./home/mongodb:/home/mongodb2
       - ./mongodb/initdb.d/:/docker-entrypoint-initdb.d/
-      - ./mongodb/data/db/:/var/lib/mongodb/
-      - ./mongodb/data/log/:/var/log/mongodb/
+      # - ./mongodb/data/db/:/var/lib/mongodb/
+      # - ./mongodb/data/log/:/var/log/mongodb/
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -61,8 +61,8 @@ services:
     restart: always
     volumes: 
       - ./rabbitmq/etc/:/etc/rabbitmq/
-      - ./rabbitmq/data:/var/lib/rabbitmq/
-      - ./rabbitmq/logs:/var/log/rabbitmq/log
+      # - ./rabbitmq/data:/var/lib/rabbitmq/
+      # - ./rabbitmq/logs:/var/log/rabbitmq/log
 
   redis:
     container_name: redis
