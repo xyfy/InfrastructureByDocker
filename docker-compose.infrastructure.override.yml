@@ -10,19 +10,67 @@ services:
   #     - "1433:1433"
 
   mongodb:
+    restart: always
+    hostname: mongodb
+    container_name: mongodb
+    env_file:
+      - .env
+    volumes:
+      - ./mongodb/mongod.conf:/etc/mongod.conf
+      - ./home/mongodb:/home/mongodb2
+      - ./mongodb/initdb.d/:/docker-entrypoint-initdb.d/
+      - ./mongodb/data/db/:/var/lib/mongodb/
+      - ./mongodb/data/log/:/var/log/mongodb/
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     ports:
       - "27017:27017"
+    command: ["-f", "/etc/mongod.conf"]
+
+  mongo-express:
+    restart: always
+    container_name: mongo-express
+    ports:
+        - 8081:8081
+    volumes:
+        - ./mongo-express/docker-entrypoint.sh:/docker-entrypoint.sh
+    env_file:
+        - .env
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
+    depends_on:
+      - mongodb
 
   rabbitmq:
+    environment:
+      - TZ=Asia/Shanghai
+    environment:
+      RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    container_name: rabbitmq
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - 15672:15672
+      - 5672:5672
+    restart: always
+    volumes: 
+      - ./rabbitmq/etc/:/etc/rabbitmq/
+      - ./rabbitmq/data:/var/lib/rabbitmq/
+      - ./rabbitmq/logs:/var/log/rabbitmq/log
 
   redis:
+    container_name: redis
     ports:
       - "6379:6379"
 
   elasticsearch:
+    container_name: elasticsearch
     volumes:
       - ./elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     environment:
@@ -31,6 +79,7 @@ services:
       - "9200:9200"
 
   logstash:
+    container_name: logstash
     volumes:
       - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./elk/logstash/pipeline:/usr/share/logstash/pipeline:ro
@@ -41,6 +90,7 @@ services:
       - "5000"
 
   kibana:
+    container_name: kibana
     volumes:
       - ./elk/kibana/config/:/usr/share/kibana/config:ro
     ports:

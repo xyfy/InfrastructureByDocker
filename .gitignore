@@ -1,0 +1,6 @@
+mongodb/data/db/*
+mongodb/data/log/*
+rabbitmq/data/*
+rabbitmq/logs/*
+# except for .gitkeep
+!.gitkeep
