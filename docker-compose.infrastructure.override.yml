@@ -20,7 +20,7 @@ services:
       - ./mongodb/home/mongodb:/home/mongodb
       - ./mongodb/initdb.d/:/docker-entrypoint-initdb.d/
       # - ./mongodb/data/db/:/data/db
-      # - ./mongodb/data/log/:/var/log/mongodb/
+      - ./mongodb/data/log/:/var/log/mongodb/
     # environment:
       # MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       # MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
