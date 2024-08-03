@@ -1,0 +1,54 @@
+{
+  "applications": {
+    "Docker-Dependencies": {
+      "type": "cli",
+      "workingDirectory": "../docker",
+      "startCommand": "./up.ps1",
+      "stopCommand": "./down.ps1"
+    },
+    "Gt.ExamFiles.AuthServer": {
+      "type": "dotnet-project",
+      "path": "../../apps/auth-server/src/Gt.ExamFiles.AuthServer/Gt.ExamFiles.AuthServer.csproj"
+    },
+    "Gt.ExamFiles.Blazor": {
+      "type": "dotnet-project",
+      "path": "../../apps/blazor/src/Gt.ExamFiles.Blazor/Gt.ExamFiles.Blazor.csproj"
+    },
+    "Gt.ExamFiles.Blazor.Server": {
+      "type": "dotnet-project",
+      "path": "../../apps/blazor/src/Gt.ExamFiles.Blazor.Server/Gt.ExamFiles.Blazor.Server.csproj"
+    },
+    "Gt.ExamFiles.PublicWeb": {
+      "type": "dotnet-project",
+      "path": "../../apps/public-web/src/Gt.ExamFiles.PublicWeb/Gt.ExamFiles.PublicWeb.csproj"
+    },
+    "Gt.ExamFiles.Web": {
+      "type": "dotnet-project",
+      "path": "../../apps/web/src/Gt.ExamFiles.Web/Gt.ExamFiles.Web.csproj"
+    },
+    "Gt.ExamFiles.AdministrationService.HttpApi.Host": {
+      "type": "dotnet-project",
+      "path": "../../services/administration/src/Gt.ExamFiles.AdministrationService.HttpApi.Host/Gt.ExamFiles.AdministrationService.HttpApi.Host.csproj"
+    },
+    "Gt.ExamFiles.IdentityService.HttpApi.Host": {
+      "type": "dotnet-project",
+      "path": "../../services/identity/src/Gt.ExamFiles.IdentityService.HttpApi.Host/Gt.ExamFiles.IdentityService.HttpApi.Host.csproj"
+    },
+    "Gt.ExamFiles.ProductService.HttpApi.Host": {
+      "type": "dotnet-project",
+      "path": "../../services/product/src/Gt.ExamFiles.ProductService.HttpApi.Host/Gt.ExamFiles.ProductService.HttpApi.Host.csproj"
+    },
+    "Gt.ExamFiles.SaasService.HttpApi.Host": {
+      "type": "dotnet-project",
+      "path": "../../services/saas/src/Gt.ExamFiles.SaasService.HttpApi.Host/Gt.ExamFiles.SaasService.HttpApi.Host.csproj"
+    },
+    "Gt.ExamFiles.WebGateway": {
+      "type": "dotnet-project",
+      "path": "../../gateways/web/src/Gt.ExamFiles.WebGateway/Gt.ExamFiles.WebGateway.csproj"
+    },
+    "Gt.ExamFiles.PublicWebGateway": {
+      "type": "dotnet-project",
+      "path": "../../gateways/web-public/src/Gt.ExamFiles.PublicWebGateway/Gt.ExamFiles.PublicWebGateway.csproj"
+    }
+  }
+}

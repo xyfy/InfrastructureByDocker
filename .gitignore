@@ -5,3 +5,4 @@ rabbitmq/data/*
 rabbitmq/logs/*
 # except for .gitkeep
 !.gitkeep
+.DS_Store

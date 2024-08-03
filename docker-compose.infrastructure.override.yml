@@ -1,51 +1,43 @@
 name: infrastructure
 
 services:
-  
-  # sqlserver:
-  #   environment:
-  #     - SA_PASSWORD=yourStrong(!)Password
-  #     - ACCEPT_EULA=Y
-  #   ports:
-  #     - "1433:1433"
 
-  mongodb:
+  elasticsearch:
     restart: always
-    hostname: mongodb
-    container_name: mongodb
-    env_file:
-      - .env
-    volumes:
-      - ./mongodb/mongod.conf:/etc/mongod.conf
-      - ./mongodb/home/mongodb:/home/mongodb
-      - ./mongodb/initdb.d/:/docker-entrypoint-initdb.d/
-      # - ./mongodb/data/db/:/data/db
-      - ./mongodb/data/log/:/var/log/mongodb/
-    # environment:
-      # MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      # MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      # MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
-    ports:
-      - "27017:27017"
-    command: ["-f", "/etc/mongod.conf"]
-
-  mongo-express:
-    restart: always
-    container_name: mongo-express
-    ports:
-        - 8081:8081
-    volumes:
-        - ./mongo-express/docker-entrypoint.sh:/docker-entrypoint.sh
-    env_file:
-        - .env
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongodb
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
-    depends_on:
-      - mongodb
+      - xpack.security.enabled=false
+      - xpack.watcher.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    volumes:
+      - ./elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      
+  kibana:
+    restart: always
+    volumes:
+      - ./elk/kibana/config/:/usr/share/kibana/config:ro
+    ports: 
+      - "5601:5601"
+      
+  sql-server-db:
+    restart: always
+    ports:
+      - "1434:1433"
+    environment:
+      SA_PASSWORD: "myPassw0rd"
+      ACCEPT_EULA: "Y"
+      
+  grafana:
+    restart: always
+    ports:
+      - "3000:3000"
+ 
+  prometheus:
+    restart: always
+    ports:
+      - "9090:9090"
 
   rabbitmq:
     environment:
@@ -53,7 +45,6 @@ services:
       RABBITMQ_ERLANG_COOKIE: ${RABBITMQ_ERLANG_COOKIE}
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-    container_name: rabbitmq
     ports:
       - 15672:15672
       - 5672:5672
@@ -64,33 +55,42 @@ services:
       # - ./rabbitmq/logs:/var/log/rabbitmq/log
 
   redis:
-    container_name: redis
+    restart: always
     ports:
       - "6379:6379"
 
-  elasticsearch:
-    container_name: elasticsearch
-    volumes:
-      - ./elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - "9200:9200"
+  # mongodb:
+  #   restart: always
+  #   hostname: mongodb
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./mongodb/mongod.conf:/etc/mongod.conf
+  #     - ./mongodb/home/mongodb:/home/mongodb
+  #     - ./mongodb/initdb.d/:/docker-entrypoint-initdb.d/
+  #     # - ./mongodb/data/db/:/data/db
+  #     - ./mongodb/data/log/:/var/log/mongodb/
+  #   # environment:
+  #     # MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+  #     # MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+  #     # MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+  #   ports:
+  #     - "27017:27017"
+  #   command: ["-f", "/etc/mongod.conf"]
 
-  logstash:
-    container_name: logstash
-    volumes:
-      - ./elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./elk/logstash/pipeline:/usr/share/logstash/pipeline:ro
-    environment:
-      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
-    ports:
-      - "9600"
-      - "5000"
-
-  kibana:
-    container_name: kibana
-    volumes:
-      - ./elk/kibana/config/:/usr/share/kibana/config:ro
-    ports:
-      - 51510:5601
+  # mongo-express:
+  #   restart: always
+  #   ports:
+  #       - 8081:8081
+  #   volumes:
+  #       - ./mongo-express/docker-entrypoint.sh:/docker-entrypoint.sh
+  #   env_file:
+  #       - .env
+  #   environment:
+  #     ME_CONFIG_MONGODB_SERVER: mongodb
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+  #     ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}
+  #     ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
+  #   depends_on:
+  #     - mongodb

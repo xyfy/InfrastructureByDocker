@@ -1,36 +1,65 @@
 name: infrastructure
 services:
-  
-  # sqlserver:
-  #   image: mcr.microsoft.com/mssql/server
-  #   volumes:
-  #     - dbdata:/var/opt/mssql
-
-  mongodb:
-    image: mongo
-  mongo-express:
-    image: mongo-express
   rabbitmq:
-    image: 'rabbitmq:3-management-alpine'
-
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    networks:
+      - gt.examfiles-network
+      
   redis:
+    container_name: redis
     image: redis:alpine
-
+    networks:
+      - gt.examfiles-network
+      
   elasticsearch:
-    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.10.1'
-    volumes:
-      - esdata:/usr/share/elasticsearch/data
-
-  logstash:
-    image: 'docker.elastic.co/logstash/logstash:7.10.1'
-    depends_on:
-      - elasticsearch
-
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+    networks:
+      - gt.examfiles-network
+      
   kibana:
-    image: 'docker.elastic.co/kibana/kibana:7.10.1'
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:8.5.3
     depends_on:
       - elasticsearch
-        
+    networks:
+      - gt.examfiles-network
+    
+  sql-server-db:
+    container_name: sql-server-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    volumes:
+      - sqldata:/var/opt/mssql
+    networks:
+      - gt.examfiles-network
+ 
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    volumes:
+      - ../grafana/storage:/var/lib/grafana
+    networks:
+      - gt.examfiles-network
+      
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    volumes:
+      - ../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ../prometheus/storage:/prometheus
+    networks:
+      - gt.examfiles-network
+  # mongodb:
+  #   container_name: mongodb
+  #   image: mongo
+  # mongo-express:
+  #   container_name: mongo-express
+  #   image: mongo-express
 volumes:
-  # dbdata:
   esdata:
+  sqldata:
+
+networks:
+  gt.examfiles-network:
+    external: true
